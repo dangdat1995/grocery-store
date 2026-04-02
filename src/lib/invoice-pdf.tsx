@@ -59,6 +59,7 @@ export interface InvoiceData {
   storeName: string;
   storePhone: string;
   storeAddress: string;
+  storeEmail?: string;
   buyerName: string;
   buyerPhone?: string;
   buyerAddress?: string;
@@ -72,6 +73,11 @@ export interface InvoiceData {
   voucherCode?: string;
   voucherDiscount: number;
   voucherDescription?: string;
+  comboSavings: number;
+  pointsUsed: number;
+  pointsDiscount: number;
+  pointsEarned: number;
+  gifts: { name: string; description: string; quantity: number }[];
   taxRate: number;
   taxAmount: number;
   total: number;
@@ -98,6 +104,8 @@ export function InvoicePDF({ data }: { data: InvoiceData }) {
     failed: "Thanh toán lỗi",
   };
 
+  const hasPromotions = data.discount > 0 || data.voucherDiscount > 0 || data.comboSavings > 0 || data.pointsDiscount > 0;
+
   return (
     <Document>
       <Page size="A4" style={styles.page}>
@@ -107,6 +115,7 @@ export function InvoicePDF({ data }: { data: InvoiceData }) {
             <Text style={styles.storeName}>{data.storeName}</Text>
             <Text style={styles.storeInfo}>{data.storeAddress}</Text>
             <Text style={styles.storeInfo}>Hotline: {data.storePhone}</Text>
+            {data.storeEmail && <Text style={styles.storeInfo}>Email: {data.storeEmail}</Text>}
           </View>
           <View>
             <Text style={styles.invoiceTitle}>HOÁ ĐƠN BÁN HÀNG</Text>
@@ -115,6 +124,16 @@ export function InvoicePDF({ data }: { data: InvoiceData }) {
             <Text style={styles.invoiceNumber}>Ngày đặt: {fmtDateTime(data.orderDate)}</Text>
             <Text style={styles.invoiceNumber}>Ngày xuất HĐ: {fmtDateTime(data.issuedAt)}</Text>
           </View>
+        </View>
+
+        {/* Greeting */}
+        <View style={{ marginBottom: 12, padding: 8, backgroundColor: "#f0fdf4", borderRadius: 4 }}>
+          <Text style={{ fontSize: 10, color: "#16a34a", fontWeight: "bold" }}>
+            Kính gửi Quý khách {data.buyerName},
+          </Text>
+          <Text style={{ fontSize: 9, color: "#6b7280", marginTop: 2 }}>
+            Cảm ơn Quý khách đã tin tưởng và mua hàng tại {data.storeName}. Dưới đây là chi tiết hoá đơn của Quý khách.
+          </Text>
         </View>
 
         {/* Buyer info */}
@@ -132,7 +151,7 @@ export function InvoicePDF({ data }: { data: InvoiceData }) {
           )}
           {data.buyerAddress && (
             <View style={styles.row}>
-              <Text style={styles.label}>Địa chỉ:</Text>
+              <Text style={styles.label}>Địa chỉ giao:</Text>
               <Text style={styles.value}>{data.buyerAddress}</Text>
             </View>
           )}
@@ -172,10 +191,10 @@ export function InvoicePDF({ data }: { data: InvoiceData }) {
           ))}
         </View>
 
-        {/* Totals */}
+        {/* Promotions & Discounts */}
         <View style={styles.totalSection}>
           <View style={styles.totalRow}>
-            <Text style={styles.totalLabel}>Tạm tính:</Text>
+            <Text style={styles.totalLabel}>Tạm tính ({data.items.length} sản phẩm):</Text>
             <Text style={styles.totalValue}>{fmtVND(data.subtotal)}</Text>
           </View>
           <View style={styles.totalRow}>
@@ -184,20 +203,42 @@ export function InvoicePDF({ data }: { data: InvoiceData }) {
               {data.deliveryFee === 0 ? "Miễn phí" : fmtVND(data.deliveryFee)}
             </Text>
           </View>
-          {data.discount > 0 && (
-            <View style={styles.totalRow}>
-              <Text style={[styles.totalLabel, { color: "#ef4444" }]}>Giảm giá:</Text>
-              <Text style={[styles.totalValue, { color: "#ef4444" }]}>-{fmtVND(data.discount)}</Text>
+
+          {/* Khuyến mãi section */}
+          {hasPromotions && (
+            <View style={{ borderTop: "1px solid #bbf7d0", paddingTop: 6, marginTop: 4, marginBottom: 4 }}>
+              <Text style={{ fontSize: 9, fontWeight: "bold", color: "#374151", marginBottom: 4 }}>KHUYẾN MÃI:</Text>
+              {data.discount > 0 && !data.voucherDiscount && !data.comboSavings && !data.pointsDiscount && (
+                <View style={styles.totalRow}>
+                  <Text style={[styles.totalLabel, { color: "#ef4444" }]}>Giảm giá:</Text>
+                  <Text style={[styles.totalValue, { color: "#ef4444" }]}>-{fmtVND(data.discount)}</Text>
+                </View>
+              )}
+              {data.voucherDiscount > 0 && (
+                <View style={styles.totalRow}>
+                  <Text style={[styles.totalLabel, { color: "#ef4444" }]}>
+                    Voucher: {data.voucherCode || "Mã KM"}{data.voucherDescription ? ` (${data.voucherDescription})` : ""}
+                  </Text>
+                  <Text style={[styles.totalValue, { color: "#ef4444" }]}>-{fmtVND(data.voucherDiscount)}</Text>
+                </View>
+              )}
+              {data.comboSavings > 0 && (
+                <View style={styles.totalRow}>
+                  <Text style={[styles.totalLabel, { color: "#ef4444" }]}>Tiết kiệm combo:</Text>
+                  <Text style={[styles.totalValue, { color: "#ef4444" }]}>-{fmtVND(data.comboSavings)}</Text>
+                </View>
+              )}
+              {data.pointsDiscount > 0 && (
+                <View style={styles.totalRow}>
+                  <Text style={[styles.totalLabel, { color: "#ef4444" }]}>
+                    Dùng {data.pointsUsed} điểm tích luỹ:
+                  </Text>
+                  <Text style={[styles.totalValue, { color: "#ef4444" }]}>-{fmtVND(data.pointsDiscount)}</Text>
+                </View>
+              )}
             </View>
           )}
-          {data.voucherDiscount > 0 && (
-            <View style={styles.totalRow}>
-              <Text style={[styles.totalLabel, { color: "#ef4444" }]}>
-                Mã KM: {data.voucherCode || "Voucher"}{data.voucherDescription ? ` (${data.voucherDescription})` : ""}
-              </Text>
-              <Text style={[styles.totalValue, { color: "#ef4444" }]}>-{fmtVND(data.voucherDiscount)}</Text>
-            </View>
-          )}
+
           {data.taxAmount > 0 && (
             <View style={styles.totalRow}>
               <Text style={styles.totalLabel}>VAT ({data.taxRate * 100}%):</Text>
@@ -210,18 +251,38 @@ export function InvoicePDF({ data }: { data: InvoiceData }) {
           </View>
         </View>
 
+        {/* Points earned */}
+        {data.pointsEarned > 0 && (
+          <View style={{ marginTop: 8, padding: 8, backgroundColor: "#fefce8", borderRadius: 4, flexDirection: "row", justifyContent: "space-between" }}>
+            <Text style={{ fontSize: 9, color: "#854d0e", fontWeight: "bold" }}>Điểm tích luỹ nhận được:</Text>
+            <Text style={{ fontSize: 10, color: "#854d0e", fontWeight: "bold" }}>+{data.pointsEarned} điểm</Text>
+          </View>
+        )}
+
+        {/* Gift promotions */}
+        {data.gifts && data.gifts.length > 0 && (
+          <View style={{ marginTop: 8, padding: 8, backgroundColor: "#fdf2f8", borderRadius: 4 }}>
+            <Text style={{ fontSize: 9, fontWeight: "bold", color: "#9d174d", marginBottom: 4 }}>QUÀ TẶNG KÈM ĐƠN HÀNG:</Text>
+            {data.gifts.map((g, i) => (
+              <Text key={i} style={{ fontSize: 9, color: "#9d174d", marginBottom: 2 }}>
+                • {g.description}{g.quantity > 1 ? ` (x${g.quantity})` : ""}
+              </Text>
+            ))}
+          </View>
+        )}
+
         {data.note && (
-          <View style={{ marginTop: 12 }}>
+          <View style={{ marginTop: 8 }}>
             <Text style={styles.label}>Ghi chú: {data.note}</Text>
           </View>
         )}
 
         <Text style={styles.watermark}>
-          Hoá đơn tạo tự động bởi Tạp Hoá Online
+          Hoá đơn tạo tự động bởi {data.storeName}
         </Text>
 
         <Text style={styles.footer}>
-          Cảm ơn quý khách đã mua hàng! | {data.storeName} | {data.storePhone}
+          Cảm ơn Quý khách đã mua hàng! | {data.storeName} | {data.storePhone}{data.storeEmail ? ` | ${data.storeEmail}` : ""}
         </Text>
       </Page>
     </Document>

@@ -70,12 +70,56 @@ export async function POST(request: NextRequest) {
         break;
     }
 
-    if (emailData) {
-      const result = await sendEmail({ to: email, ...emailData });
-      return NextResponse.json({ success: true, email_sent: result.success });
+    // Create in-app notification for the customer
+    const notifMap: Record<string, { title: string; message: string }> = {
+      confirmed: {
+        title: "Đơn hàng đã xác nhận",
+        message: `Đơn hàng ${order_number} đã được xác nhận và đang chuẩn bị.`,
+      },
+      preparing: {
+        title: "Đang chuẩn bị hàng",
+        message: `Đơn hàng ${order_number} đang được chuẩn bị. Vui lòng chờ nhé!`,
+      },
+      delivering: {
+        title: "Đơn hàng đang giao",
+        message: `Đơn ${order_number} đã giao cho shipper.${shipping_code ? ` MVĐ: ${shipping_code}` : ""}`,
+      },
+      delivered: {
+        title: "Giao hàng thành công",
+        message: `Đơn hàng ${order_number} đã giao thành công. Cảm ơn bạn!`,
+      },
+      cancelled: {
+        title: "Đơn hàng đã huỷ",
+        message: `Đơn hàng ${order_number} đã bị huỷ.${note ? ` Lý do: ${note}` : ""}`,
+      },
+      payment_confirmed: {
+        title: "Thanh toán thành công",
+        message: `Đã nhận thanh toán cho đơn hàng ${order_number}.`,
+      },
+    };
+
+    const notif = notifMap[status];
+    if (notif) {
+      try {
+        await supabase.from("notifications").insert({
+          user_id: order.user_id,
+          type: "order",
+          title: notif.title,
+          message: notif.message,
+          link: `/don-hang/${order_id}`,
+          order_id,
+        });
+      } catch (notifErr) {
+        console.error("[Notify] Notification insert error:", notifErr);
+      }
     }
 
-    return NextResponse.json({ success: true, skipped: "no_template" });
+    if (emailData) {
+      const result = await sendEmail({ to: email, ...emailData });
+      return NextResponse.json({ success: true, email_sent: result.success, notified: !!notif });
+    }
+
+    return NextResponse.json({ success: true, skipped: "no_template", notified: !!notif });
   } catch (err: any) {
     console.error("[Notify] Error:", err);
     return NextResponse.json({ error: "Error" }, { status: 500 });

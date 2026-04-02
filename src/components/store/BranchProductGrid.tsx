@@ -27,7 +27,7 @@ export default function BranchProductGrid({
   }
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2.5">
       {filtered.map((product) => (
         <ProductCard key={product.id} product={product} />
       ))}

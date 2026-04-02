@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Flame, Sparkles, Gift, ShoppingBag, ChevronRight } from "lucide-react";
+import { Flame, Sparkles, Gift, ShoppingBag, ChevronRight, Zap, Menu } from "lucide-react";
+import { useState } from "react";
 
 const CATEGORY_EMOJIS: Record<string, string> = {
   "rau-cu-qua": "🥬", "trai-cay": "🍊", "thit-tuoi": "🥩", "hai-san": "🦐",
@@ -17,54 +18,77 @@ interface QuickNavProps {
 }
 
 export default function QuickNav({ categories, saleCount, comboCount, giftCount }: QuickNavProps) {
+  const [showAll, setShowAll] = useState(false);
+
   return (
-    <section className="bg-white border-b sticky top-[57px] md:top-[97px] z-40 shadow-sm">
-      <div className="max-w-7xl mx-auto px-3">
-        <div className="flex items-center gap-1.5 py-1.5 overflow-x-auto scrollbar-hide">
-          {/* Sale */}
+    <section className="bg-white border-b sticky top-[85px] md:top-[94px] z-40">
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="flex items-center gap-1 py-2 overflow-x-auto scrollbar-hide">
+          {/* All categories dropdown toggle */}
+          <button
+            onClick={() => setShowAll(!showAll)}
+            className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#E42128] text-white hover:bg-red-700 transition-colors text-xs font-bold"
+          >
+            <Menu className="w-3.5 h-3.5" />
+            Danh mục
+            <ChevronRight className={`w-3 h-3 transition-transform ${showAll ? "rotate-90" : ""}`} />
+          </button>
+
+          {/* Promo quick links */}
           {saleCount > 0 && (
-            <a href="#khuyen-mai" className="shrink-0 flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors text-[11px] font-bold">
-              <Flame className="w-3 h-3" /> Sale
+            <a href="#flash-sale" className="shrink-0 flex items-center gap-1 px-3 py-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-colors text-xs font-bold border border-red-200">
+              <Zap className="w-3 h-3" /> Flash Sale
             </a>
           )}
-
-          {/* Combo */}
           {comboCount > 0 && (
-            <a href="#combo" className="shrink-0 flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-purple-500 text-white hover:bg-purple-600 transition-colors text-[11px] font-bold">
+            <a href="#combo" className="shrink-0 flex items-center gap-1 px-3 py-2 rounded-lg bg-purple-50 text-purple-600 hover:bg-purple-100 transition-colors text-xs font-bold border border-purple-200">
               <Sparkles className="w-3 h-3" /> Combo
             </a>
           )}
-
-          {/* Quà tặng */}
           {giftCount > 0 && (
-            <a href="#qua-tang" className="shrink-0 flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-green-500 text-white hover:bg-green-600 transition-colors text-[11px] font-bold">
-              <Gift className="w-3 h-3" /> Quà
+            <a href="#qua-tang" className="shrink-0 flex items-center gap-1 px-3 py-2 rounded-lg bg-green-50 text-green-600 hover:bg-green-100 transition-colors text-xs font-bold border border-green-200">
+              <Gift className="w-3 h-3" /> Quà tặng
             </a>
           )}
 
-          <div className="shrink-0 w-px h-4 bg-gray-200 mx-0.5" />
+          <div className="shrink-0 w-px h-5 bg-gray-200 mx-1" />
 
-          {/* Categories */}
+          {/* Category pills */}
           {categories.map((cat) => (
             <Link
               key={cat.id}
               href={`/danh-muc/${cat.slug}`}
-              className="shrink-0 flex items-center gap-1 px-2 py-1.5 rounded-lg border border-gray-200 hover:border-green-400 hover:bg-green-50 transition-all text-gray-600 hover:text-green-700"
+              className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-700 hover:text-[#E42128]"
             >
-              <span className="text-sm leading-none">{cat.icon || CATEGORY_EMOJIS[cat.slug] || "🛍️"}</span>
-              <span className="font-medium text-[11px] whitespace-nowrap">{cat.name}</span>
+              <span className="text-base leading-none">{cat.icon || CATEGORY_EMOJIS[cat.slug] || "🛍️"}</span>
+              <span className="font-medium text-xs whitespace-nowrap">{cat.name}</span>
             </Link>
           ))}
 
-          <Link
-            href="/san-pham"
-            className="shrink-0 flex items-center gap-1 px-2 py-1.5 rounded-lg bg-gray-100 hover:bg-green-100 transition-all text-gray-500 hover:text-green-700"
-          >
-            <ShoppingBag className="w-3 h-3" />
-            <span className="font-medium text-[11px]">Tất cả</span>
-            <ChevronRight className="w-2.5 h-2.5" />
+          <Link href="/san-pham" className="shrink-0 flex items-center gap-1 px-3 py-2 rounded-lg text-gray-500 hover:text-[#E42128] hover:bg-gray-100 transition-colors">
+            <ShoppingBag className="w-3.5 h-3.5" />
+            <span className="font-medium text-xs">Tất cả</span>
           </Link>
         </div>
+
+        {/* Expandable category grid */}
+        {showAll && (
+          <div className="pb-3 border-t mt-1 pt-3 animate-fade-in-up">
+            <div className="grid grid-cols-5 sm:grid-cols-10 gap-2">
+              {categories.map((cat) => (
+                <Link
+                  key={cat.id}
+                  href={`/danh-muc/${cat.slug}`}
+                  onClick={() => setShowAll(false)}
+                  className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-red-50 hover:shadow-sm transition-all group"
+                >
+                  <span className="text-2xl group-hover:scale-110 transition-transform">{cat.icon || CATEGORY_EMOJIS[cat.slug] || "🛍️"}</span>
+                  <span className="text-[10px] font-medium text-gray-600 group-hover:text-[#E42128] text-center leading-tight">{cat.name}</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );

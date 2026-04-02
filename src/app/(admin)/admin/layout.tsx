@@ -23,6 +23,8 @@ import {
   Menu,
   X,
   Trophy,
+  Megaphone,
+  Bell,
 } from "lucide-react";
 
 const sidebarSections = [
@@ -33,20 +35,26 @@ const sidebarSections = [
     ],
   },
   {
-    label: "Bán hàng",
+    label: "Đơn hàng",
     items: [
       { href: "/admin/don-hang", icon: ShoppingCart, label: "Đơn hàng" },
-      { href: "/admin/san-pham", icon: Package, label: "Sản phẩm" },
-      { href: "/admin/danh-muc", icon: FolderOpen, label: "Danh mục" },
-      { href: "/admin/kho", icon: Warehouse, label: "Kho hàng" },
     ],
   },
   {
-    label: "Khuyến mãi",
+    label: "Sản phẩm",
     items: [
+      { href: "/admin/san-pham", icon: Package, label: "Sản phẩm" },
+      { href: "/admin/danh-muc", icon: FolderOpen, label: "Danh mục" },
+      { href: "/admin/kho", icon: Warehouse, label: "Kho hàng" },
+      { href: "/admin/combo", icon: PackagePlus, label: "Combo" },
+    ],
+  },
+  {
+    label: "Marketing",
+    items: [
+      { href: "/admin/quang-cao", icon: Megaphone, label: "Quảng cáo" },
       { href: "/admin/su-kien", icon: CalendarDays, label: "Sự kiện" },
       { href: "/admin/voucher", icon: Ticket, label: "Voucher" },
-      { href: "/admin/combo", icon: PackagePlus, label: "Combo" },
       { href: "/admin/qua-tang", icon: Gift, label: "Quà tặng" },
       { href: "/admin/moc-thuong", icon: Trophy, label: "Mốc thưởng" },
     ],
@@ -55,6 +63,7 @@ const sidebarSections = [
     label: "Quản lý",
     items: [
       { href: "/admin/khach-hang", icon: Users, label: "Khách hàng" },
+      { href: "/admin/thong-bao", icon: Bell, label: "Thông báo" },
       { href: "/admin/chi-nhanh", icon: Building2, label: "Chi nhánh" },
       { href: "/admin/phan-tich", icon: BarChart3, label: "Phân tích" },
     ],

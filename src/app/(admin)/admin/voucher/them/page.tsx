@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
+import { isDemo } from "@/lib/demo";
 
 export default function CreateVoucherPage() {
   const router = useRouter();
@@ -35,6 +36,15 @@ export default function CreateVoucherPage() {
     }
 
     setLoading(true);
+
+    if (isDemo) {
+      await new Promise((r) => setTimeout(r, 500));
+      setLoading(false);
+      toast.success("Demo: Tạo voucher thành công!");
+      router.push("/admin/voucher");
+      return;
+    }
+
     const { error } = await supabase.from("vouchers").insert({
       code: form.code.toUpperCase().trim(),
       description: form.description || null,
@@ -88,10 +98,12 @@ export default function CreateVoucherPage() {
           </div>
 
           <div className="grid grid-cols-2 gap-4">
+            {form.discount_type !== "free_ship" && (
             <div>
               <Label>Giá trị giảm *</Label>
               <Input type="number" value={form.discount_value} onChange={(e) => updateForm("discount_value", e.target.value)} placeholder={form.discount_type === "percent" ? "20" : "20000"} className="mt-1" required />
             </div>
+            )}
             <div>
               <Label>Giảm tối đa (VND)</Label>
               <Input type="number" value={form.max_discount} onChange={(e) => updateForm("max_discount", e.target.value)} placeholder="50000" className="mt-1" />

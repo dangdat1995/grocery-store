@@ -8,7 +8,8 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
-import { Plus, Trash2, ImageIcon, Video } from "lucide-react";
+import { Plus, Trash2, ImageIcon } from "lucide-react";
+import { isDemo } from "@/lib/demo";
 
 interface MediaItem {
   type: "image" | "video";
@@ -43,6 +44,15 @@ export default function CreateEventPage() {
     }
 
     setLoading(true);
+
+    if (isDemo) {
+      await new Promise((r) => setTimeout(r, 500));
+      setLoading(false);
+      toast.success("Demo: Tạo sự kiện thành công!");
+      router.push("/admin/su-kien");
+      return;
+    }
+
     const { error } = await supabase.from("events").insert({
       title: form.title,
       slug: generateSlug(form.title),

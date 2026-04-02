@@ -20,9 +20,9 @@ export default function FeaturedStrip({ products }: { products: Product[] }) {
   if (!products.length) return null;
 
   return (
-    <section className="bg-gradient-to-r from-green-50 via-emerald-50 to-green-50">
-      <div className="max-w-7xl mx-auto px-4 py-4">
-        <div className="flex items-center justify-between mb-3">
+    <section className="bg-white rounded-xl mx-4 md:mx-auto max-w-7xl">
+      <div className="px-4 py-3">
+        <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-1.5">
             <Star className="w-4 h-4 text-green-600" />
             <h3 className="text-sm font-extrabold text-green-700">Sản phẩm nổi bật</h3>

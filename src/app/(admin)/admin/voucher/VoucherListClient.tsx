@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { formatPrice, formatDate } from "@/lib/format";
 import { DISCOUNT_TYPES } from "@/lib/constants";
+import { toast } from "sonner";
 import AutoDistributeButton from "./AutoDistributeButton";
 import {
   Search,
@@ -44,10 +45,23 @@ interface Props {
   vouchers: any[];
 }
 
-export default function VoucherListClient({ vouchers }: Props) {
+export default function VoucherListClient({ vouchers: initialVouchers }: Props) {
+  const [vouchers, setVouchers] = useState(initialVouchers);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
+
+  useEffect(() => {
+    const onAiAction = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      if (detail?.action === "create_voucher" && detail.item) {
+        setVouchers((prev) => [detail.item, ...prev]);
+        toast.success("AI vừa tạo voucher mới!");
+      }
+    };
+    window.addEventListener("ai-action-done", onAiAction);
+    return () => window.removeEventListener("ai-action-done", onAiAction);
+  }, []);
 
   const statusCounts = useMemo(() => {
     const counts: Record<string, number> = { all: vouchers.length };

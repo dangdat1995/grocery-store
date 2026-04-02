@@ -146,9 +146,9 @@ export default function DashboardClient({ data, isDemo }: { data: DashboardData;
       {/* Quick stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mb-3 sm:mb-4">
         {[
-          { label: "Sản phẩm", value: data.totalProducts, icon: Package, color: "text-purple-600 bg-purple-50", href: "/admin/san-pham" },
-          { label: "Khách hàng", value: data.totalCustomers, icon: Users, color: "text-blue-600 bg-blue-50", href: "/admin/khach-hang" },
-          { label: "Truy cập", value: data.todayVisits, icon: Eye, color: "text-cyan-600 bg-cyan-50", href: "/admin/phan-tich" },
+          { label: "Sản phẩm", value: data.totalProducts, icon: Package, color: "text-green-700 bg-green-50", href: "/admin/san-pham" },
+          { label: "Khách hàng", value: data.totalCustomers, icon: Users, color: "text-emerald-700 bg-emerald-50", href: "/admin/khach-hang" },
+          { label: "Truy cập", value: data.todayVisits, icon: Eye, color: "text-teal-700 bg-teal-50", href: "/admin/phan-tich" },
           { label: "Kho hàng", value: `${data.lowStock.length} cảnh báo`, icon: Warehouse, color: "text-amber-600 bg-amber-50", href: "/admin/kho" },
         ].map(s => (
           <Link key={s.label} href={s.href} className="block">

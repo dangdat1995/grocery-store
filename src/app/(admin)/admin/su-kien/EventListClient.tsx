@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { formatPrice, formatDate } from "@/lib/format";
+import { toast } from "sonner";
 import {
   Search,
   Video,
@@ -13,7 +14,6 @@ import {
   Zap,
   Clock,
   CheckCircle,
-  XCircle,
 } from "lucide-react";
 
 function getEventStatus(start: string, end: string) {
@@ -40,10 +40,23 @@ interface Props {
   events: any[];
 }
 
-export default function EventListClient({ events }: Props) {
+export default function EventListClient({ events: initialEvents }: Props) {
+  const [events, setEvents] = useState(initialEvents);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [discountFilter, setDiscountFilter] = useState("all");
+
+  useEffect(() => {
+    const onAiAction = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      if (detail?.action === "create_event" && detail.item) {
+        setEvents((prev) => [detail.item, ...prev]);
+        toast.success("AI vừa tạo sự kiện mới!");
+      }
+    };
+    window.addEventListener("ai-action-done", onAiAction);
+    return () => window.removeEventListener("ai-action-done", onAiAction);
+  }, []);
 
   // Counts
   const statusCounts = useMemo(() => {

@@ -50,17 +50,17 @@ export default function CategoryMegaMenu({ categories, combos, gifts, hasSale }:
         </div>
         <div className="flex items-center gap-2">
           {hasSale && (
-            <span className="text-[10px] bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-semibold flex items-center gap-1">
+            <span className="text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-semibold flex items-center gap-1">
               <Flame className="w-3 h-3" /> Sale
             </span>
           )}
           {combos.length > 0 && (
-            <span className="text-[10px] bg-purple-100 text-purple-600 px-2 py-0.5 rounded-full font-semibold flex items-center gap-1">
+            <span className="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-semibold flex items-center gap-1">
               <PackagePlus className="w-3 h-3" /> {combos.length} Combo
             </span>
           )}
           {gifts.length > 0 && (
-            <span className="text-[10px] bg-green-100 text-green-600 px-2 py-0.5 rounded-full font-semibold flex items-center gap-1">
+            <span className="text-[10px] bg-teal-100 text-teal-700 px-2 py-0.5 rounded-full font-semibold flex items-center gap-1">
               <Gift className="w-3 h-3" /> Quà tặng
             </span>
           )}
@@ -103,27 +103,27 @@ export default function CategoryMegaMenu({ categories, combos, gifts, hasSale }:
                   <a
                     href="#khuyen-mai"
                     onClick={() => setOpen(false)}
-                    className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-red-50 to-orange-50 border border-red-200 hover:shadow-md transition-all group"
+                    className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 hover:shadow-md transition-all group"
                   >
-                    <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-orange-500 rounded-xl flex items-center justify-center shrink-0">
+                    <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shrink-0">
                       <Flame className="w-5 h-5 text-white" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-bold text-sm text-red-600">Khuyến mãi hot</p>
+                      <p className="font-bold text-sm text-green-700">Khuyến mãi hot</p>
                       <p className="text-[11px] text-gray-500">Giá tốt nhất hôm nay</p>
                     </div>
-                    <ChevronRight className="w-4 h-4 text-red-400 group-hover:translate-x-0.5 transition-transform" />
+                    <ChevronRight className="w-4 h-4 text-green-500 group-hover:translate-x-0.5 transition-transform" />
                   </a>
                 )}
 
                 {/* Combos */}
                 {combos.length > 0 && (
-                  <div className="p-3 rounded-xl bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200">
+                  <div className="p-3 rounded-xl bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200">
                     <div className="flex items-center gap-2 mb-2">
-                      <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                      <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-lg flex items-center justify-center">
                         <Sparkles className="w-4 h-4 text-white" />
                       </div>
-                      <p className="font-bold text-sm text-purple-600">Combo tiết kiệm</p>
+                      <p className="font-bold text-sm text-emerald-700">Combo tiết kiệm</p>
                     </div>
                     <div className="space-y-1.5">
                       {combos.slice(0, 3).map((combo) => {
@@ -134,7 +134,7 @@ export default function CategoryMegaMenu({ categories, combos, gifts, hasSale }:
                           <div key={combo.id} className="flex items-center justify-between text-xs">
                             <span className="text-gray-700 font-medium truncate">{combo.name}</span>
                             {save > 0 && (
-                              <span className="text-red-500 font-bold shrink-0 ml-2">-{save}%</span>
+                              <span className="text-green-600 font-bold shrink-0 ml-2">-{save}%</span>
                             )}
                           </div>
                         );

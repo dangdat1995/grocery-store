@@ -3,6 +3,7 @@ export const STORE_NAME = "Tạp Hoá Online";
 export const STORE_DESCRIPTION =
   "Cửa hàng tạp hoá online - Giao hàng tận nơi trong bán kính 20km";
 export const STORE_PHONE = "0901234567";
+export const STORE_EMAIL = "lienhe@taphoaonline.vn";
 
 // Store location (default HCM)
 export const STORE_LAT = Number(process.env.NEXT_PUBLIC_STORE_LAT) || 10.7769;
