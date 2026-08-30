@@ -28,7 +28,7 @@ function LoginForm() {
   const [otp, setOtp] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
- const [fullName, setFullName] = useState("");
+  const [fullName, setFullName] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -36,22 +36,10 @@ function LoginForm() {
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") || "/";
 
- const { signInWithPhone, verifyOtp, signInWithEmail, signUpWithEmail, resetPasswordForEmail } =
+  const { signInWithPhone, verifyOtp, signInWithEmail, signUpWithEmail, resetPasswordForEmail } =
     useAuth();
 
-  const handleForgotPassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    const { error } = await resetPasswordForEmail(email);
-    setLoading(false);
-
-    if (error) {
-      toast.error("Không thể gửi email. Vui lòng thử lại.");
-      return;
-    }
-    toast.success("Đã gửi link đặt lại mật khẩu tới email của bạn!");
-    setMode("email-login");
-  };
+  const handlePhoneSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!phone || phone.length < 10) {
       toast.error("Vui lòng nhập số điện thoại hợp lệ");
@@ -116,6 +104,20 @@ function LoginForm() {
       return;
     }
     toast.success("Tạo tài khoản thành công! Vui lòng kiểm tra email.");
+    setMode("email-login");
+  };
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    const { error } = await resetPasswordForEmail(email);
+    setLoading(false);
+
+    if (error) {
+      toast.error("Không thể gửi email. Vui lòng thử lại.");
+      return;
+    }
+    toast.success("Đã gửi link đặt lại mật khẩu tới email của bạn!");
     setMode("email-login");
   };
 
@@ -318,7 +320,6 @@ function LoginForm() {
               />
             </div>
             <div>
-              <div>
               <Label htmlFor="signupPassword">Mật khẩu</Label>
               <Input
                 id="signupPassword"
@@ -347,15 +348,8 @@ function LoginForm() {
             >
               {loading ? "Đang tạo..." : "Tạo tài khoản"}
             </Button>
-              type="submit"
-              className="w-full bg-green-600 hover:bg-green-700"
-              disabled={loading}
-            >
-              {loading ? "Đang tạo..." : "Tạo tài khoản"}
-            </Button>
 
             <button
-             <button
               type="button"
               className="w-full text-sm text-green-600 hover:underline"
               onClick={() => setMode("email-login")}
@@ -401,3 +395,6 @@ function LoginForm() {
           </form>
         )}
       </Card>
+    </div>
+  );
+}
